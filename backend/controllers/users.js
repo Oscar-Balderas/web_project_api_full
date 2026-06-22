@@ -39,6 +39,24 @@ const getUserById = (req, res) => {
     });
 };
 
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: "Usuario no encontrado",
+        });
+      }
+
+      return res.send(user);
+    })
+    .catch(() => {
+      return res.status(500).send({
+        message: "Error del servidor",
+      });
+    });
+};
+
 const createUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
 
@@ -175,6 +193,7 @@ const updateAvatar = (req, res) => {
 module.exports = {
   getUsers,
   getUserById,
+  getCurrentUser,
   createUser,
   login,
   updateProfile,
