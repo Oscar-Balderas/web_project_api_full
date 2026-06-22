@@ -12,6 +12,7 @@ import * as auth from "./utils/auth";
 function App() {
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
+  const [token, setToken] = useState("");
   const [isCheckingToken, setIsCheckingToken] = useState(true);
   const [email, setEmail] = useState("");
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
@@ -26,7 +27,8 @@ function App() {
         .checkToken(token)
         .then((data) => {
           setLoggedIn(true);
-          setEmail(data.data.email);
+          setEmail(data.email);
+          setToken(token);
         })
         .catch((err) => {
           console.log(err);
@@ -69,6 +71,7 @@ function App() {
 
         if (data.token) {
           localStorage.setItem("jwt", data.token);
+          setToken(data.token);
           setLoggedIn(true);
           setEmail(email);
           navigate("/");
@@ -81,6 +84,7 @@ function App() {
 
   function handleSignOut() {
     localStorage.removeItem("jwt");
+    setToken("");
     setLoggedIn(false);
     setEmail("");
     navigate("/signin");
@@ -101,7 +105,7 @@ function App() {
             <ProtectedRoute loggedIn={loggedIn}>
               <>
                 <Header email={email} onSignOut={handleSignOut} />
-                <Main />
+                <Main token={token} />
                 <Footer />
               </>
             </ProtectedRoute>

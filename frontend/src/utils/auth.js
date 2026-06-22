@@ -1,4 +1,4 @@
-const BASE_URL = "https://se-register-api.en.tripleten-services.com/v1";
+const BASE_URL = "http://localhost:3000";
 
 export const register = ({ email, password }) => {
   return fetch(`${BASE_URL}/signup`, {
