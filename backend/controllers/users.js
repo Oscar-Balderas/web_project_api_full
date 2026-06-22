@@ -1,5 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = "dev-secret";
 
 const getUsers = (req, res) => {
   User.find({})
@@ -61,6 +63,38 @@ const createUser = (req, res) => {
         });
       }
 
+      return res.status(500).send({
+        message: "Error del servidor",
+      });
+    });
+};
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).send({
+          message: "Correo o contraseña incorrectos",
+        });
+      }
+
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return res.status(401).send({
+            message: "Correo o contraseña incorrectos",
+          });
+        }
+
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        });
+
+        return res.send({ token });
+      });
+    })
+    .catch(() => {
       return res.status(500).send({
         message: "Error del servidor",
       });
@@ -142,6 +176,7 @@ module.exports = {
   getUsers,
   getUserById,
   createUser,
+  login,
   updateProfile,
   updateAvatar,
 };
