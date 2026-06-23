@@ -1,5 +1,7 @@
+const { errors } = require('celebrate');
 const express = require('express');
 const mongoose = require('mongoose');
+const { validateSignup, validateSignin } = require('./middlewares/validation');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/error-handler');
@@ -12,8 +14,8 @@ const cardsRouter = require('./routes/cards');
 const PORT = 3000;
 
 mongoose.connect('mongodb://localhost:27017/aroundb');
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateSignin, login);
+app.post('/signup', validateSignup, createUser);
 app.use(auth);
 app.use(usersRouter);
 app.use(cardsRouter);
@@ -24,6 +26,7 @@ app.use((req, res, next) => {
   next(error);
 });
 
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
