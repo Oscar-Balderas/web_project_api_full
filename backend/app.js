@@ -5,9 +5,11 @@ const { validateSignup, validateSignin } = require('./middlewares/validation');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/error-handler');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 app.use(express.json());
+app.use(requestLogger);
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
@@ -27,6 +29,7 @@ app.use((req, res, next) => {
 });
 
 app.use(errors());
+app.use(errorLogger);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
