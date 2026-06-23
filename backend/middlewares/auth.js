@@ -1,17 +1,17 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = "dev-secret";
+const JWT_SECRET = 'dev-secret';
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
-  if (!authorization || !authorization.startsWith("Bearer ")) {
+  if (!authorization || !authorization.startsWith('Bearer ')) {
     return res.status(403).send({
-      message: "Autorización requerida",
+      message: 'Autorización requerida',
     });
   }
 
-  const token = authorization.replace("Bearer ", "");
+  const token = authorization.replace('Bearer ', '');
 
   let payload;
 
@@ -19,7 +19,7 @@ const auth = (req, res, next) => {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return res.status(403).send({
-      message: "Autorización requerida",
+      message: 'Autorización requerida',
     });
   }
 

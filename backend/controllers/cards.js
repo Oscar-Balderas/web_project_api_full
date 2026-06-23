@@ -1,18 +1,14 @@
-const Card = require("../models/card");
+const Card = require('../models/card');
 
-const getCards = (req, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => {
       res.send(cards);
     })
-    .catch(() => {
-      res.status(500).send({
-        message: "Error del servidor",
-      });
-    });
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({
@@ -24,51 +20,45 @@ const createCard = (req, res) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "Datos inválidos",
-        });
+      if (err.name === 'ValidationError') {
+        const error = new Error('Datos inválidos');
+        error.statusCode = 400;
+        return next(error);
       }
 
-      return res.status(500).send({
-        message: "Error del servidor",
-      });
+      return next(err);
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({
-          message: "Tarjeta no encontrada",
-        });
+        const error = new Error('Tarjeta no encontrada');
+        error.statusCode = 404;
+        throw error;
       }
 
       if (card.owner.toString() !== req.user._id) {
-        return res.status(403).send({
-          message: "No tienes permiso para eliminar esta tarjeta",
-        });
+        const error = new Error('No tienes permiso para eliminar esta tarjeta');
+        error.statusCode = 403;
+        throw error;
       }
 
-      return Card.findByIdAndDelete(req.params.cardId).then((deletedCard) =>
-        res.send(deletedCard),
-      );
+      return Card.findByIdAndDelete(req.params.cardId).then((deletedCard) => res.send(deletedCard));
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(400).send({
-          message: "ID inválido",
-        });
+      if (err.name === 'CastError') {
+        const error = new Error('ID inválido');
+        error.statusCode = 400;
+        return next(error);
       }
 
-      return res.status(500).send({
-        message: "Error del servidor",
-      });
+      return next(err);
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
@@ -78,27 +68,25 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({
-          message: "Tarjeta no encontrada",
-        });
+        const error = new Error('Tarjeta no encontrada');
+        error.statusCode = 404;
+        throw error;
       }
 
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(400).send({
-          message: "ID inválido",
-        });
+      if (err.name === 'CastError') {
+        const error = new Error('ID inválido');
+        error.statusCode = 400;
+        return next(error);
       }
 
-      return res.status(500).send({
-        message: "Error del servidor",
-      });
+      return next(err);
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
@@ -108,23 +96,21 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({
-          message: "Tarjeta no encontrada",
-        });
+        const error = new Error('Tarjeta no encontrada');
+        error.statusCode = 404;
+        throw error;
       }
 
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        return res.status(400).send({
-          message: "ID inválido",
-        });
+      if (err.name === 'CastError') {
+        const error = new Error('ID inválido');
+        error.statusCode = 400;
+        return next(error);
       }
 
-      return res.status(500).send({
-        message: "Error del servidor",
-      });
+      return next(err);
     });
 };
 
