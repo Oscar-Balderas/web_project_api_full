@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Popup from "./componentes/Popup/Popup";
 import NewCard from "./form/NewCard/NewCard";
 import avatar from "../../images/avatar.jpg";
@@ -6,24 +6,35 @@ import Card from "../Card/Card";
 import ImagePopup from "../ImagePopup/ImagePopup";
 import RemoveCard from "../RemoveCard/RemoveCard";
 
-const cards = [
-  {
-    isLiked: false,
-    _id: "1",
-    name: "Yosemite Valley",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg",
-  },
-  {
-    isLiked: false,
-    _id: "2",
-    name: "Lake Louise",
-    link: "https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg",
-  },
-];
-
-function Main() {
+function Main({ token }) {
   const [popup, setPopup] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
+
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    fetch("https://api-project19-oscar.chickenkiller.com/cards", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject(`Error: ${res.status}`);
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        setCards(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [token]);
 
   const newCardPopup = {
     title: "Nuevo lugar",
