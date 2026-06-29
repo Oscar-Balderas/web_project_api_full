@@ -95,7 +95,7 @@ function Main({ token }) {
 
   const newCardPopup = {
     title: "Nuevo lugar",
-    children: <NewCard />,
+    children: <NewCard onAddPlaceSubmit={handleAddPlaceSubmit} />,
   };
 
   const editProfilePopup = {
@@ -122,6 +122,32 @@ function Main({ token }) {
       </form>
     ),
   };
+
+  function handleAddPlaceSubmit({ name, link }) {
+    fetch("https://api-project19-oscar.chickenkiller.com/cards", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        link,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject(`Error: ${res.status}`);
+        }
+
+        return res.json();
+      })
+      .then((newCard) => {
+        setCards((state) => [newCard, ...state]);
+        handleClosePopup();
+      })
+      .catch((err) => console.log(err));
+  }
 
   return (
     <main className="content">
