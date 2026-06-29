@@ -14,6 +14,7 @@ export default function Card(props) {
         aria-label="Delete card"
         className="card__delete-button"
         type="button"
+        onClick={() => props.onCardDelete(props.card)}
       />
 
       <div className="card__description">
@@ -22,7 +23,10 @@ export default function Card(props) {
         <button
           aria-label="Like card"
           type="button"
-          className="card__like-button"
+          className={`card__like-button ${
+            isLiked ? "card__like-button_is-active" : ""
+          }`}
+          onClick={() => props.onCardLike(props.card)}
         />
       </div>
     </li>

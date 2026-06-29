@@ -9,7 +9,6 @@ import RemoveCard from "../RemoveCard/RemoveCard";
 function Main({ token }) {
   const [popup, setPopup] = useState(null);
   const [selectedCard, setSelectedCard] = useState(null);
-
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
@@ -35,6 +34,64 @@ function Main({ token }) {
         console.log(err);
       });
   }, [token]);
+
+  function handleOpenPopup(popupData) {
+    setPopup(popupData);
+  }
+
+  function handleClosePopup() {
+    setPopup(null);
+  }
+
+  function handleCardLike(card) {
+    const method = card.isLiked ? "DELETE" : "PUT";
+
+    fetch(
+      `https://api-project19-oscar.chickenkiller.com/cards/${card._id}/likes`,
+      {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    )
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject(`Error: ${res.status}`);
+        }
+
+        return res.json();
+      })
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((currentCard) =>
+            currentCard._id === card._id ? newCard : currentCard,
+          ),
+        );
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleCardDelete(card) {
+    fetch(`https://api-project19-oscar.chickenkiller.com/cards/${card._id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return Promise.reject(`Error: ${res.status}`);
+        }
+
+        setCards((state) =>
+          state.filter((currentCard) => currentCard._id !== card._id),
+        );
+      })
+      .catch((err) => console.log(err));
+  }
 
   const newCardPopup = {
     title: "Nuevo lugar",
@@ -66,19 +123,6 @@ function Main({ token }) {
     ),
   };
 
-  const removeCardPopup = {
-    title: "Eliminar Card",
-    children: <RemoveCard />,
-  };
-
-  function handleOpenPopup(popupData) {
-    setPopup(popupData);
-  }
-
-  function handleClosePopup() {
-    setPopup(null);
-  }
-
   return (
     <main className="content">
       <section className="profile page__section">
@@ -88,7 +132,7 @@ function Main({ token }) {
             className="profile__avatar-edit-button"
             type="button"
             onClick={() => handleOpenPopup(editAvatarPopup)}
-          ></button>
+          />
         </div>
 
         <div className="profile__info">
@@ -97,7 +141,7 @@ function Main({ token }) {
             className="profile__edit-button"
             type="button"
             onClick={() => handleOpenPopup(editProfilePopup)}
-          ></button>
+          />
           <p className="profile__description">Explorador</p>
         </div>
 
@@ -105,13 +149,19 @@ function Main({ token }) {
           className="profile__add-button"
           type="button"
           onClick={() => handleOpenPopup(newCardPopup)}
-        ></button>
+        />
       </section>
 
       <section className="cards page__section">
         <ul className="cards__list">
           {cards.map((card) => (
-            <Card key={card._id} card={card} onCardClick={setSelectedCard} />
+            <Card
+              key={card._id}
+              card={card}
+              onCardClick={setSelectedCard}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+            />
           ))}
         </ul>
       </section>
@@ -122,10 +172,7 @@ function Main({ token }) {
         </Popup>
       )}
 
-      <ImagePopup
-        card={selectedCard}
-        onClose={() => setSelectedCard(null)}
-      ></ImagePopup>
+      <ImagePopup card={selectedCard} onClose={() => setSelectedCard(null)} />
     </main>
   );
 }
