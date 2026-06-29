@@ -1,5 +1,7 @@
 export default function Card(props) {
-  const { name, link, isLiked } = props.card;
+  const { name, link, likes } = props.card;
+
+  const isLiked = likes && likes.length > 0;
 
   const cardLikeButtonClassName = `card__like-button ${
     isLiked ? "card__like-button_is-active" : ""

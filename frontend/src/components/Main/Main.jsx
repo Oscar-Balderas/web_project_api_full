@@ -44,7 +44,7 @@ function Main({ token }) {
   }
 
   function handleCardLike(card) {
-    const method = card.isLiked ? "DELETE" : "PUT";
+    const method = card.likes && card.likes.length > 0 ? "DELETE" : "PUT";
 
     fetch(
       `https://api-project19-oscar.chickenkiller.com/cards/${card._id}/likes`,
