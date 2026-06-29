@@ -1,6 +1,18 @@
 export default function Card(props) {
   const { name, link, isLiked } = props.card;
 
+  const cardLikeButtonClassName = `card__like-button ${
+    isLiked ? "card__like-button_is-active" : ""
+  }`;
+
+  function handleLikeClick() {
+    props.onCardLike(props.card);
+  }
+
+  function handleDeleteClick() {
+    props.onCardDelete(props.card);
+  }
+
   return (
     <li className="card">
       <img
@@ -14,7 +26,7 @@ export default function Card(props) {
         aria-label="Delete card"
         className="card__delete-button"
         type="button"
-        onClick={() => props.onCardDelete(props.card)}
+        onClick={handleDeleteClick}
       />
 
       <div className="card__description">
@@ -23,10 +35,8 @@ export default function Card(props) {
         <button
           aria-label="Like card"
           type="button"
-          className={`card__like-button ${
-            isLiked ? "card__like-button_is-active" : ""
-          }`}
-          onClick={() => props.onCardLike(props.card)}
+          className={cardLikeButtonClassName}
+          onClick={handleLikeClick}
         />
       </div>
     </li>
