@@ -141,7 +141,7 @@ function Main({ token }) {
   }
 
   function handleAddPlaceSubmit({ name, link }) {
-    fetch("https://api-project19-oscar.chickenkiller.com/cards", {
+    return fetch("https://api-project19-oscar.chickenkiller.com/cards", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -156,8 +156,7 @@ function Main({ token }) {
       .then((newCard) => {
         setCards((state) => [newCard, ...state]);
         handleClosePopup();
-      })
-      .catch((err) => console.log(err));
+      });
   }
 
   const newCardPopup = {

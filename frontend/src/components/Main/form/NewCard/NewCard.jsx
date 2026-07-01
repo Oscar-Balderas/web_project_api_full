@@ -7,13 +7,12 @@ export default function NewCard({ onAddPlaceSubmit }) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    onAddPlaceSubmit({
-      name,
-      link,
-    });
-
-    setName("");
-    setLink("");
+    onAddPlaceSubmit({ name, link })
+      .then(() => {
+        setName("");
+        setLink("");
+      })
+      .catch((err) => console.log(err));
   }
 
   return (
@@ -29,7 +28,7 @@ export default function NewCard({ onAddPlaceSubmit }) {
           className="popup__input popup__input_type_card-name"
           id="card-name"
           maxLength="30"
-          minLength="1"
+          minLength="2"
           name="name"
           placeholder="title"
           required
