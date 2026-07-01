@@ -1,5 +1,6 @@
 const { errors } = require('celebrate');
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const { validateSignup, validateSignin } = require('./middlewares/validation');
 const { login, createUser } = require('./controllers/users');
@@ -8,6 +9,7 @@ const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
 const usersRouter = require('./routes/users');

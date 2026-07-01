@@ -1,8 +1,8 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
-const JWT_SECRET = "dev-secret";
+const JWT_SECRET = 'dev-secret';
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -16,7 +16,7 @@ const getUserById = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Usuario no encontrado");
+        const error = new Error('Usuario no encontrado');
         error.statusCode = 404;
         throw error;
       }
@@ -24,8 +24,8 @@ const getUserById = (req, res, next) => {
       return res.send(user);
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        const error = new Error("ID inválido");
+      if (err.name === 'CastError') {
+        const error = new Error('ID inválido');
         error.statusCode = 400;
         return next(error);
       }
@@ -38,7 +38,7 @@ const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        const error = new Error("Usuario no encontrado");
+        const error = new Error('Usuario no encontrado');
         error.statusCode = 404;
         throw error;
       }
@@ -49,25 +49,25 @@ const getCurrentUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   bcrypt
     .hash(password, 10)
-    .then((hash) =>
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      }),
-    )
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
     .then((user) => {
       res.status(201).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        const error = new Error("Datos inválidos");
+      if (err.name === 'ValidationError') {
+        const error = new Error('Datos inválidos');
         error.statusCode = 400;
         return next(error);
       }
@@ -80,23 +80,23 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findOne({ email })
-    .select("+password")
+    .select('+password')
     .then((user) => {
       if (!user) {
-        const error = new Error("Correo o contraseña incorrectos");
+        const error = new Error('Correo o contraseña incorrectos');
         error.statusCode = 401;
         throw error;
       }
 
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          const error = new Error("Correo o contraseña incorrectos");
+          const error = new Error('Correo o contraseña incorrectos');
           error.statusCode = 401;
           throw error;
         }
 
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-          expiresIn: "7d",
+          expiresIn: '7d',
         });
 
         return res.send({ token });
@@ -121,7 +121,7 @@ const updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        const error = new Error("Usuario no encontrado");
+        const error = new Error('Usuario no encontrado');
         error.statusCode = 404;
         throw error;
       }
@@ -129,8 +129,8 @@ const updateProfile = (req, res, next) => {
       return res.send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        const error = new Error("Datos inválidos");
+      if (err.name === 'ValidationError') {
+        const error = new Error('Datos inválidos');
         error.statusCode = 400;
         return next(error);
       }
@@ -154,7 +154,7 @@ const updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        const error = new Error("Usuario no encontrado");
+        const error = new Error('Usuario no encontrado');
         error.statusCode = 404;
         throw error;
       }
@@ -162,8 +162,8 @@ const updateAvatar = (req, res, next) => {
       return res.send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        const error = new Error("Datos inválidos");
+      if (err.name === 'ValidationError') {
+        const error = new Error('Datos inválidos');
         error.statusCode = 400;
         return next(error);
       }
