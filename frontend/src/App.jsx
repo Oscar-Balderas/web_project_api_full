@@ -31,7 +31,12 @@ function App() {
           setToken(token);
         })
         .catch((err) => {
-          console.log(err);
+          console.log("ERROR LOGIN:", err);
+          setIsSuccess(false);
+          setTooltipMessage(
+            "Uy, algo salió mal. Por favor, inténtalo de nuevo.",
+          );
+          setIsInfoTooltipOpen(true);
         })
         .finally(() => {
           setIsCheckingToken(false);
@@ -54,7 +59,7 @@ function App() {
         setIsInfoTooltipOpen(true);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("ERROR LOGIN:", err);
         setIsSuccess(false);
         setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
         setIsInfoTooltipOpen(true);
@@ -79,6 +84,9 @@ function App() {
       })
       .catch((err) => {
         console.log("ERROR LOGIN:", err);
+        setIsSuccess(false);
+        setTooltipMessage("Uy, algo salió mal. Por favor, inténtalo de nuevo.");
+        setIsInfoTooltipOpen(true);
       });
   }
 
